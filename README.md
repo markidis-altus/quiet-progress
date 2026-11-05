@@ -1,6 +1,6 @@
 # Quiet Progress 2.0
 
-An iPhone-first habit, task, mood and weight tracker, built from the original
+An iPhone-first habit, task, daily-brief and weight tracker, built from the original
 `quiet-progress-tracker.html`. It installs to the Home Screen, opens full-screen
 like a native app and works offline. All data stays on the device.
 
