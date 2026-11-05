@@ -1,7 +1,7 @@
 /* Quiet Progress service worker: makes the app open with no internet.
    Pages: try the network briefly (to pick up updates), otherwise serve the saved copy.
    Everything else: saved copy first. Bump CACHE when this file changes. */
-const CACHE = "qp-v3";
+const CACHE = "qp-v4";
 const CORE = ["./", "./index.html", "./manifest.webmanifest",
   "./icons/apple-touch-icon.png", "./icons/icon-192.png", "./icons/icon-512.png"];
 const NET_TIMEOUT_MS = 2500;
@@ -25,7 +25,8 @@ self.addEventListener("activate", (e) => {
 async function page(req) {
   const cache = await caches.open(CACHE);
   const saved = (await cache.match("./index.html")) || (await cache.match("./"));
-  const net = fetch(req).then((res) => {
+  // "no-cache" = always ask the server (GitHub Pages lets browsers reuse pages for 10 minutes otherwise)
+  const net = fetch(req.url, { cache: "no-cache", credentials: "same-origin" }).then((res) => {
     // Safari refuses redirected responses for page loads, so only keep clean 200s
     if (res.ok && !res.redirected) cache.put("./index.html", res.clone());
     return res;

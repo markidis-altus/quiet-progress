@@ -70,17 +70,28 @@ const listeners = new Set<() => void>();
 let saveTimer: number | undefined;
 export let saveError = false;
 
+function writeNow() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(state));
+    saveError = false;
+  } catch {
+    saveError = true;
+  }
+}
 function persist() {
   clearTimeout(saveTimer);
-  saveTimer = window.setTimeout(() => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(state));
-      saveError = false;
-    } catch {
-      saveError = true;
-    }
-  }, 250);
+  saveTimer = window.setTimeout(() => { saveTimer = undefined; writeNow(); }, 250);
 }
+/** Write any pending change immediately (before a reload, or when the app is closed). */
+export function flushSave() {
+  if (saveTimer === undefined) return;
+  clearTimeout(saveTimer);
+  saveTimer = undefined;
+  writeNow();
+}
+// iPhone can freeze or kill a Home Screen app the moment you swipe away — save first
+window.addEventListener("pagehide", flushSave);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushSave(); });
 if (migratedOnLoad) persist();
 
 const emit = () => {

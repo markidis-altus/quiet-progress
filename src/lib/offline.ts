@@ -1,4 +1,5 @@
 /* Offline support: registers the service worker and reports whether the app can open with no internet. */
+import { flushSave } from "./store";
 
 export type OfflineStatus = "ready" | "preparing" | "wrong-browser" | "unsupported" | "local-file";
 
@@ -14,7 +15,27 @@ const CACHE_PREFIX = "qp-";
 export function registerServiceWorker() {
   const okOrigin = location.protocol === "https:" || ["localhost", "127.0.0.1"].includes(location.hostname);
   if (!("serviceWorker" in navigator) || !okOrigin) return;
-  navigator.serviceWorker.register("./sw.js").catch(() => { /* status shows "preparing" */ });
+  const sw = navigator.serviceWorker;
+
+  sw.register("./sw.js", { updateViaCache: "none" }).then((reg) => {
+    // iPhone resumes Home Screen apps instead of reloading them, so look for a new version on every return
+    const check = () => reg.update().catch(() => { /* offline */ });
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") check(); });
+    setInterval(check, 30 * 60 * 1000);
+  }).catch(() => { /* status shows "preparing" */ });
+
+  // A new version has taken over: refresh so it shows straight away.
+  let hadController = !!sw.controller;
+  let pending = false;
+  const reload = () => { flushSave(); location.reload(); };
+  sw.addEventListener("controllerchange", () => {
+    if (!hadController) { hadController = true; return; } // very first install — nothing to refresh
+    const typing = (document.activeElement as HTMLElement | null)?.closest?.("input,textarea,select");
+    if (typing) pending = true; // don't yank the page while you're writing
+    else reload();
+  });
+  document.addEventListener("visibilitychange", () => { if (pending && document.visibilityState === "hidden") reload(); });
+  document.addEventListener("focusout", () => { if (pending) setTimeout(() => { if (!document.activeElement?.closest?.("input,textarea,select")) reload(); }, 300); });
 }
 
 export async function offlineStatus(): Promise<OfflineStatus> {
