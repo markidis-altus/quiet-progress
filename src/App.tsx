@@ -3,15 +3,17 @@ import { addDays, todayISO } from "./lib/dates";
 import { migratedOnLoad, useStore } from "./lib/store";
 import { ConfirmHost, Icon, ToastHost, toast } from "./components/ui";
 import { Today } from "./screens/Today";
+import { Brief } from "./screens/Brief";
 import { Habits } from "./screens/Habits";
 import { Tasks } from "./screens/Tasks";
 import { Weight } from "./screens/Weight";
 import { Insights } from "./screens/Insights";
 import { Settings } from "./screens/Settings";
 
-type Tab = "today" | "habits" | "tasks" | "weight" | "insights";
+type Tab = "today" | "brief" | "habits" | "tasks" | "weight" | "insights";
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: "today", label: "Today", icon: "today" },
+  { id: "brief", label: "Brief", icon: "brief" },
   { id: "habits", label: "Habits", icon: "habits" },
   { id: "tasks", label: "Tasks", icon: "tasks" },
   { id: "weight", label: "Weight", icon: "weight" },
@@ -57,15 +59,16 @@ export function App() {
 
   useEffect(() => { if (migratedOnLoad) toast("Imported your data from the original tracker"); }, []);
 
-  // keyboard shortcuts on a computer: 1–5 switch tabs, ←/→ move the day
+  // keyboard shortcuts on a computer: 1–6 switch tabs, ←/→ move the day
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement;
       if (el.closest("input,textarea,select,[role=dialog]") || e.metaKey || e.ctrlKey || e.altKey) return;
       const n = +e.key;
-      if (n >= 1 && n <= 5) setTab(TABS[n - 1].id);
-      else if (e.key === "ArrowLeft" && (tab === "today" || tab === "tasks")) setDate((d) => addDays(d, tab === "tasks" ? -7 : -1));
-      else if (e.key === "ArrowRight" && (tab === "today" || tab === "tasks")) setDate((d) => addDays(d, tab === "tasks" ? 7 : 1));
+      const dated = tab === "today" || tab === "brief" || tab === "tasks";
+      if (n >= 1 && n <= TABS.length) setTab(TABS[n - 1].id);
+      else if (e.key === "ArrowLeft" && dated) setDate((d) => addDays(d, tab === "tasks" ? -7 : -1));
+      else if (e.key === "ArrowRight" && dated) setDate((d) => addDays(d, tab === "tasks" ? 7 : 1));
       else if (e.key === "t") setDate(todayISO());
     };
     window.addEventListener("keydown", k);
@@ -75,7 +78,8 @@ export function App() {
   return (
     <div className="app">
       <main>
-        {tab === "today" && <Today date={date} setDate={setDate} openSettings={() => setSettings(true)} />}
+        {tab === "today" && <Today date={date} setDate={setDate} openSettings={() => setSettings(true)} openBrief={() => setTab("brief")} />}
+        {tab === "brief" && <Brief date={date} setDate={setDate} goToday={() => setTab("today")} />}
         {tab === "habits" && <Habits />}
         {tab === "tasks" && <Tasks date={date} setDate={setDate} />}
         {tab === "weight" && <Weight />}

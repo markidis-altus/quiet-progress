@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ISODate } from "../lib/types";
 import { useStore } from "../lib/store";
 import { addDays, DOW_SHORT, fmt, fmtShort, mondayOf, todayISO, weekDays } from "../lib/dates";
-import { bandColor, checkinScore, pct } from "../lib/stats";
+import { bandColor, pct } from "../lib/stats";
 import { Icon, Ring } from "../components/ui";
 import { Chart } from "../components/charts";
 import { TaskList, TaskRow, TaskSheet } from "../components/tasks";
@@ -70,7 +70,6 @@ export function Tasks({ date, setDate }: { date: ISODate; setDate: (d: ISODate) 
             {week.map((d, i) => {
               const x = per[i];
               const rate = x.total ? x.done / x.total : null;
-              const sc = checkinScore(s, d);
               const isCollapsed = collapsed[d] ?? (d < today && x.total > 0 && x.done === x.total);
               return (
                 <section key={d} className={"card day" + (d === today ? " is-today" : "")}>
@@ -78,7 +77,7 @@ export function Tasks({ date, setDate }: { date: ISODate; setDate: (d: ISODate) 
                     <div>
                       <b>{fmt(d, { weekday: "long" })}</b>
                       {d === today && <span className="badge">TODAY</span>}
-                      <div className="muted tiny">{fmtShort(d)}{sc != null && <> · mindset {pct(sc)}</>}</div>
+                      <div className="muted tiny">{fmtShort(d)}{s.briefs[d] && <> · brief ✓</>}</div>
                     </div>
                     <div className="row gap8" style={{ alignItems: "center" }}>
                       <span className="small muted">{x.done}/{x.total}</span>

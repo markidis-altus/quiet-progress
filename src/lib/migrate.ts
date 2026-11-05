@@ -107,6 +107,7 @@ export function migrateV1(v1: V1): State {
     habitLog,
     tasks,
     checkins,
+    briefs: {},
     weight: { goal: v1.weight?.goal ?? undefined, entries },
     settings: { theme: "system", unit: v1.weight?.unit === "lb" ? "lb" : "kg" },
   };

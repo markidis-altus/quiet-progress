@@ -65,7 +65,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
   };
 
   const reset = async () => {
-    const ok = await confirmDialog("Erase everything?", "All habits, tasks, check-ins and weights on this device will be cleared. Make a backup first.", "Erase", true);
+    const ok = await confirmDialog("Erase everything?", "All habits, tasks, briefs and weights on this device will be cleared. Make a backup first.", "Erase", true);
     if (!ok) return;
     replaceState(emptyState());
     toast("Everything cleared", { label: "Undo", run: undo });
@@ -116,7 +116,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
       <button className="btn ghost block" style={{ marginTop: 14 }} onClick={() => setHelp(!help)}>How it works</button>
       {help && (
         <div className="help">
-          <p><b>Today</b> is your daily home: tick habits, plan and finish tasks, do a quick check-in and log your weight. The ring shows how much of the day is done. Swipe through the week strip to look back or plan ahead.</p>
+          <p><b>Today</b> is your daily home: tick habits, plan and finish tasks and log your weight. The ring shows how much of the day is done. Use the week strip to look back or plan ahead.</p>
+          <p><b>Brief</b> is where you write a few lines for the day: a main focus, then plans, priorities or how it went. Tap the prompts (Top 3, Watch out for…) to add a starter line. It saves as you type, past briefs are listed and searchable, and writing one every day builds a streak.</p>
           <p><b>Habits</b> can be daily or 1–6× a week. A 3× habit scores 100% for any week with 3 ticks, whichever days you choose — once met, it stops nagging you that week. Streaks count days (daily habits) or weeks (weekly ones). Archive a habit to stop tracking it while keeping its history. The month grid is the classic spreadsheet view.</p>
           <p><b>Tasks</b>: type “9:30 gym” to schedule a time, end with ! / !! / !!! for priority. Unfinished tasks from earlier days show on Today under “Carried over”.</p>
           <p><b>Weight</b>: weigh in whenever you like. The 7-day trend line irons out water-weight noise; the per-week rate and goal date are based on the last 4 weeks.</p>

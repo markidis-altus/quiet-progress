@@ -14,9 +14,20 @@ export function emptyState(): State {
     habitLog: {},
     tasks: {},
     checkins: {},
+    briefs: {},
     weight: { entries: {} },
     settings: { theme: "system", unit: "kg" },
   };
+}
+
+/** Older saves had a one-line note inside the check-in; carry those over as briefs. */
+function briefsFrom(s: Partial<State>): State["briefs"] {
+  if (s.briefs) return s.briefs;
+  const out: State["briefs"] = {};
+  for (const [d, c] of Object.entries(s.checkins ?? {})) {
+    if (c.note && c.note.trim()) out[d] = { text: c.note.trim(), updated: new Date().toISOString() };
+  }
+  return out;
 }
 
 /** Fill in anything missing so older / partial saves never crash the app. */
@@ -30,6 +41,7 @@ export function normalize(s: Partial<State>): State {
     habitLog: s.habitLog ?? {},
     tasks: s.tasks ?? {},
     checkins: s.checkins ?? {},
+    briefs: briefsFrom(s),
     weight: { entries: {}, ...(s.weight ?? {}) },
     settings: { ...base.settings, ...(s.settings ?? {}) },
   };

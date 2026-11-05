@@ -97,13 +97,6 @@ export function dayProgress(s: State, d: ISODate) {
   };
 }
 
-export function checkinScore(s: State, d: ISODate): number | null {
-  const c = s.checkins[d];
-  if (!c) return null;
-  const vals = [c.mood, c.energy, c.focus, c.motivation].filter((v): v is number => v != null);
-  return vals.length ? vals.reduce((a, b) => a + b, 0) / (vals.length * 10) : null;
-}
-
 export const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
 
 /* ---------- weight ---------- */
@@ -135,15 +128,6 @@ export function weeklyRate(series: { date: string; v: number }[], days = 28) {
   let num = 0, den = 0;
   xs.forEach((x, i) => { num += (x - mx) * (ys[i] - my); den += (x - mx) ** 2; });
   return den ? (num / den) * 7 : null;
-}
-
-/** Pearson correlation; null if not enough data. */
-export function correlation(xs: number[], ys: number[]) {
-  if (xs.length < 5) return null;
-  const mx = avg(xs)!, my = avg(ys)!;
-  let n = 0, dx = 0, dy = 0;
-  xs.forEach((x, i) => { n += (x - mx) * (ys[i] - my); dx += (x - mx) ** 2; dy += (ys[i] - my) ** 2; });
-  return dx && dy ? n / Math.sqrt(dx * dy) : null;
 }
 
 export const bandColor = (p: number | null) =>

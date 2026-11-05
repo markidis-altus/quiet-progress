@@ -164,13 +164,6 @@ header.top { display: flex; justify-content: space-between; align-items: flex-en
 .quickadd input { border: 0; background: transparent; padding: 8px 0; }
 .quickadd.compact input { padding: 6px 0; }
 .overdue { margin-bottom: 10px; border-color: color-mix(in srgb, var(--yellow) 35%, var(--border)); }
-.checkin { margin-bottom: 14px; }
-.checkin .row { margin-bottom: 6px; font-size: 14px; }
-.score { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }
-.score button { height: 32px; border-radius: 8px; background: var(--card2); border: 1px solid var(--border); font-size: 12.5px; font-weight: 600; color: var(--muted); }
-.score button.fill { background: color-mix(in srgb, var(--c) 22%, var(--card2)); border-color: transparent; color: var(--text); }
-.score button.on { background: var(--c); border-color: var(--c); color: #fff; }
-.note { margin-top: 2px; }
 .weight-in { font-size: 22px; font-weight: 700; width: 120px; text-align: center; padding: 8px; }
 
 /* ===== habits ===== */
@@ -288,3 +281,30 @@ header.top { display: flex; justify-content: space-between; align-items: flex-en
 .offline-card .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--yellow); margin-top: 5px; flex: none; }
 .offline-card.ok .dot { background: var(--teal); }
 .offline-card svg { vertical-align: -2px; }
+
+/* ===== brief ===== */
+.hero-brief { display: flex; justify-content: space-between; align-items: baseline; width: 100%; text-align: left; }
+.hero-brief span { color: var(--muted); font-size: 13.5px; }
+.hero-brief b { font-size: 15px !important; }
+.hero-brief b.ok { color: var(--teal); }
+.hero-brief b.todo { color: var(--purple); }
+.brief-peek { display: flex; gap: 10px; align-items: center; width: 100%; margin-top: 10px; padding: 10px 14px; text-align: left; color: var(--muted); font-size: 14px; }
+.brief-peek .ellipsis { color: var(--text); }
+.glance .h3 { margin: 0; }
+.glance-stats { display: flex; gap: 16px; flex-wrap: wrap; margin: 8px 0 4px; font-size: 13.5px; color: var(--muted); }
+.glance-stats b { color: var(--text); }
+.glance-habits { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.ghabit { font-size: 12.5px; padding: 3px 9px; border-radius: 99px; border: 1px solid var(--border); background: var(--card2); color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ghabit.on { color: var(--text); border-color: color-mix(in srgb, var(--teal) 50%, var(--border)); background: color-mix(in srgb, var(--teal) 12%, var(--card2)); text-decoration: line-through; text-decoration-color: var(--teal); }
+.glance-times { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; font-size: 13.5px; }
+.brief-card { margin-top: 12px; }
+.focus-in { font-size: 17px; font-weight: 650; }
+.brief-text { min-height: 180px; font-size: 16px; line-height: 1.55; resize: none; overflow: hidden; background: var(--card2); }
+.prompts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip-btn { font-size: 12.5px; font-weight: 600; padding: 6px 10px; border-radius: 99px; border: 1px dashed var(--border); color: var(--muted); min-height: 32px; }
+.chip-btn:active { background: var(--card2); }
+.past { display: block; width: 100%; text-align: left; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.past:last-child { border-bottom: 0; }
+.past-focus { font-weight: 650; margin-top: 3px; color: var(--purple); }
+.past-text { color: var(--muted); font-size: 13.5px; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line; }
+.tabbar button span { white-space: nowrap; }

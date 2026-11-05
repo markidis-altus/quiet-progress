@@ -42,17 +42,17 @@ const csvCell = (v: unknown) => {
 export async function exportCSV() {
   const s = getState();
   const dates = new Set<string>([
-    ...Object.keys(s.habitLog), ...Object.keys(s.tasks), ...Object.keys(s.checkins), ...Object.keys(s.weight.entries),
+    ...Object.keys(s.habitLog), ...Object.keys(s.tasks), ...Object.keys(s.briefs), ...Object.keys(s.weight.entries),
   ]);
   if (!dates.size) return false;
   const sorted = [...dates].sort();
   const all = range(sorted[0], sorted[sorted.length - 1]);
-  const rows = [["date", "habits_done", "habits_due", "tasks_done", "tasks_total", "mood", "energy", "focus", "motivation", `weight_${s.settings.unit}`, "habits_ticked", "note"]];
+  const rows = [["date", "habits_done", "habits_due", "tasks_done", "tasks_total", `weight_${s.settings.unit}`, "habits_ticked", "brief_focus", "brief"]];
   for (const d of all) {
     const p = dayProgress(s, d);
-    const c = s.checkins[d] ?? {};
+    const b = s.briefs[d];
     const names = (s.habitLog[d] ?? []).map((id) => s.habits.find((h) => h.id === id)?.name).filter(Boolean).join("; ");
-    rows.push([d, p.habitsDone, p.habitsDue, p.tasksDone, p.tasks, c.mood, c.energy, c.focus, c.motivation, s.weight.entries[d], names, c.note].map(csvCell) as string[]);
+    rows.push([d, p.habitsDone, p.habitsDue, p.tasksDone, p.tasks, s.weight.entries[d], names, b?.focus, b?.text].map(csvCell) as string[]);
   }
   return saveFile(`quiet-progress-${todayISO()}.csv`, "text/csv", rows.map((r) => r.join(",")).join("\n"));
 }

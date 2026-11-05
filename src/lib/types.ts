@@ -34,6 +34,14 @@ export interface Checkin {
   note?: string;
 }
 
+/** A short written brief for one day. */
+export interface Brief {
+  /** One-line main focus for the day. */
+  focus?: string;
+  text?: string;
+  updated: string; // ISO timestamp
+}
+
 export interface Settings {
   theme: "system" | "dark" | "light";
   unit: "kg" | "lb";
@@ -49,16 +57,11 @@ export interface State {
   habitLog: Record<ISODate, string[]>;
   /** date → tasks planned for that day (in display order) */
   tasks: Record<ISODate, Task[]>;
+  /** Kept so older backups round-trip; no longer shown in the app. */
   checkins: Record<ISODate, Checkin>;
+  briefs: Record<ISODate, Brief>;
   weight: { goal?: number; entries: Record<ISODate, number> };
   settings: Settings;
 }
-
-export const CHECKIN_KEYS: { key: CheckinKey; label: string; color: string }[] = [
-  { key: "mood", label: "Mood", color: "var(--cyan)" },
-  { key: "energy", label: "Energy", color: "var(--yellow)" },
-  { key: "focus", label: "Focus", color: "var(--purple)" },
-  { key: "motivation", label: "Motivation", color: "var(--pink)" },
-];
 
 export const HABIT_COLORS = ["#785FFA", "#1BD5AD", "#3FE0E8", "#FFD84D", "#FF6B6B", "#E44B8A", "#FF9F43", "#7BD88F"];

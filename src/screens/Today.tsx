@@ -1,16 +1,15 @@
 import { useState } from "react";
 import type { Habit, ISODate } from "../lib/types";
-import { CHECKIN_KEYS } from "../lib/types";
 import { update, useStore } from "../lib/store";
 import { addDays, DOW_LETTER, fmtLong, fromISO, relativeLabel, todayISO, weekDays } from "../lib/dates";
-import { activeHabits, checkinScore, dayProgress, pct, weightSeries } from "../lib/stats";
+import { activeHabits, dayProgress, pct, weightSeries } from "../lib/stats";
 import { daysSinceBackup, exportBackup } from "../lib/backup";
 import { isIOSOtherBrowser } from "../lib/offline";
-import { Empty, Icon, Ring, ScorePicker, toast } from "../components/ui";
+import { Empty, Icon, Ring, toast } from "../components/ui";
 import { HabitDetail, HabitEditor, HabitRow } from "../components/habits";
 import { moveTask, TaskList, TaskRow, TaskSheet } from "../components/tasks";
 
-export function Today({ date, setDate, openSettings }: { date: ISODate; setDate: (d: ISODate) => void; openSettings: () => void }) {
+export function Today({ date, setDate, openSettings, openBrief }: { date: ISODate; setDate: (d: ISODate) => void; openSettings: () => void; openBrief: () => void }) {
   const s = useStore();
   const today = todayISO();
   const [editing, setEditing] = useState<Habit | "new" | null>(null);
@@ -19,8 +18,8 @@ export function Today({ date, setDate, openSettings }: { date: ISODate; setDate:
   const [showAllOverdue, setShowAllOverdue] = useState(false);
   const habits = activeHabits(s, date);
   const p = dayProgress(s, date);
-  const score = checkinScore(s, date);
-  const c = s.checkins[date] ?? {};
+  const brief = s.briefs[date];
+  const briefPreview = (brief?.focus?.trim() || brief?.text?.trim().split("\n")[0] || "").slice(0, 80);
   const week = weekDays(date);
 
   const overdue = date === today
@@ -29,13 +28,6 @@ export function Today({ date, setDate, openSettings }: { date: ISODate; setDate:
         .flatMap(([d, list]) => list.filter((t) => !t.done).map((t) => ({ d, t })))
         .sort((a, b) => (a.d < b.d ? -1 : 1))
     : [];
-
-  const setCheckin = (k: string, v: number | string | undefined) =>
-    update((st) => {
-      const cur: Record<string, unknown> = { ...(st.checkins[date] ?? {}), [k]: v };
-      for (const key of Object.keys(cur)) if (cur[key] == null || cur[key] === "") delete cur[key];
-      if (Object.keys(cur).length) st.checkins[date] = cur; else delete st.checkins[date];
-    });
 
   const series = weightSeries(s);
   const wToday = s.weight.entries[date];
@@ -95,9 +87,19 @@ export function Today({ date, setDate, openSettings }: { date: ISODate; setDate:
         <div className="hero-stats">
           <div><span>Habits</span><b>{p.habitsDone}<small>/{p.habitsDue}</small></b></div>
           <div><span>Tasks</span><b>{p.tasksDone}<small>/{p.tasks}</small></b></div>
-          <div><span>Mindset</span><b>{score == null ? "—" : pct(score)}</b></div>
+          <button className="hero-brief" onClick={openBrief}>
+            <span>Brief</span>
+            <b className={brief ? "ok" : "todo"}>{brief ? "Written ✓" : "Write →"}</b>
+          </button>
         </div>
       </section>
+
+      {briefPreview && (
+        <button className="card brief-peek" onClick={openBrief}>
+          <Icon name="brief" size={16} />
+          <span className="ellipsis">{briefPreview}</span>
+        </button>
+      )}
 
       <section>
         <div className="sec-head">
@@ -138,19 +140,6 @@ export function Today({ date, setDate, openSettings }: { date: ISODate; setDate:
         )}
         <div className="card list">
           <TaskList date={date} empty="Nothing planned. Add a task below — start with a time like “9:30” to schedule it, end with ! for priority." />
-        </div>
-      </section>
-
-      <section>
-        <div className="sec-head"><h2>Check-in</h2><span className="muted small">{score == null ? "How are you today?" : "Score " + pct(score)}</span></div>
-        <div className="card">
-          {CHECKIN_KEYS.map(({ key, label, color }) => (
-            <div className="checkin" key={key}>
-              <div className="row between"><span>{label}</span><b style={{ color }}>{c[key] ?? "–"}</b></div>
-              <ScorePicker value={c[key]} color={color} onChange={(v) => setCheckin(key, v)} />
-            </div>
-          ))}
-          <textarea className="note" rows={2} placeholder="A line about today (optional)" value={c.note ?? ""} onChange={(e) => setCheckin("note", e.target.value)} />
         </div>
       </section>
 
