@@ -17,21 +17,19 @@ like a native app and works offline. All data stays on the device.
 
 Deletes show an **Undo** toast. Backups from the original HTML tracker are converted automatically when restored.
 
+## Live app
+
+**https://markidis-altus.github.io/quiet-progress/**
+
+Every push to `main` builds the app and publishes it to GitHub Pages
+(`.github/workflows/deploy.yml`). Installed copies pick up the new version the
+next time they're opened online; data on the phone is untouched.
+
 ## Put it on your iPhone
 
-The app needs to be served over **https** once (that's how iPhone installs web apps).
-After that it runs offline from the Home Screen icon.
-
-1. Build it (already done — the output is in `dist/`):
-   ```bash
-   npm install
-   npm run build
-   ```
-2. Host the `dist/` folder on any static host. Easiest is **Netlify Drop**: go to
-   https://app.netlify.com/drop, drag the `dist` folder onto the page, and sign up
-   (free) so the site stays up. GitHub Pages or Cloudflare Pages also work.
-3. On the iPhone, open that https link in **Safari**, tap **Share → Add to Home Screen**.
-4. Open the app **from the new icon**. The Home Screen app has its own storage, separate from Safari.
+1. Open the link above in **Safari** (not Chrome).
+2. Tap **Share → Add to Home Screen → Add**.
+3. Open the app **from the new icon**. The Home Screen app has its own storage, separate from Safari.
 
 ### Bring your existing data across
 1. On the computer, open the old `quiet-progress-tracker.html` and press **Backup**.
