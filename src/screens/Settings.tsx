@@ -1,10 +1,35 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { emptyState, replaceState, undo, update, useStore } from "../lib/store";
 import { daysSinceBackup, exportBackup, exportCSV, parseBackup } from "../lib/backup";
+import { isIOS, isIOSOtherBrowser, isStandalone, offlineStatus, OFFLINE_TEXT, type OfflineStatus } from "../lib/offline";
 import { Icon, Segmented, Sheet, confirmDialog, toast } from "../components/ui";
 
-const isStandalone = () =>
-  window.matchMedia?.("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+function OfflineCard() {
+  const [st, setSt] = useState<OfflineStatus | null>(null);
+  useEffect(() => {
+    let alive = true;
+    const check = () => offlineStatus().then((v) => alive && setSt(v));
+    check();
+    const t = setInterval(check, 2000); // flips to "ready" as soon as the copy is saved
+    return () => { alive = false; clearInterval(t); };
+  }, []);
+  if (!st) return null;
+  const t = OFFLINE_TEXT[st];
+  return (
+    <div className={"offline-card" + (t.ok ? " ok" : "")}>
+      <span className="dot" />
+      <div>
+        <b>{t.title}</b>
+        <div className="small muted">{t.body}</div>
+        {t.ok && st === "ready" && isIOS && !isStandalone() && (
+          <div className="small muted" style={{ marginTop: 4 }}>
+            Not installed yet: tap <Icon name="share" size={14} /> Share → Add to Home Screen, then open it from the icon once with internet.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function Settings({ onClose }: { onClose: () => void }) {
   const s = useStore();
@@ -49,7 +74,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
   return (
     <Sheet open onClose={onClose} title="Settings">
-      {!isStandalone() && /iPhone|iPad|iPod/.test(navigator.userAgent) && (
+      <OfflineCard />
+      {!isStandalone() && isIOS && !isIOSOtherBrowser && (
         <div className="banner" style={{ marginBottom: 14 }}>
           <span>Install: tap <Icon name="share" size={15} /> <b>Share</b>, then <b>Add to Home Screen</b>. Then open it from the icon.</span>
         </div>

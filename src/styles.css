@@ -281,3 +281,10 @@ header.top { display: flex; justify-content: space-between; align-items: flex-en
 @keyframes pop { from { transform: translateX(var(--tx, 0)) scale(.96); opacity: 0; } }
 .toast { --tx: -50%; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* offline status (Settings) */
+.offline-card { display: flex; gap: 10px; align-items: flex-start; border: 1px solid color-mix(in srgb, var(--yellow) 40%, var(--border)); background: color-mix(in srgb, var(--yellow) 8%, var(--card)); border-radius: 14px; padding: 10px 12px; margin-bottom: 14px; }
+.offline-card.ok { border-color: color-mix(in srgb, var(--teal) 40%, var(--border)); background: color-mix(in srgb, var(--teal) 8%, var(--card)); }
+.offline-card .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--yellow); margin-top: 5px; flex: none; }
+.offline-card.ok .dot { background: var(--teal); }
+.offline-card svg { vertical-align: -2px; }

@@ -5,6 +5,7 @@ import { update, useStore } from "../lib/store";
 import { addDays, DOW_LETTER, fmtLong, fromISO, relativeLabel, todayISO, weekDays } from "../lib/dates";
 import { activeHabits, checkinScore, dayProgress, pct, weightSeries } from "../lib/stats";
 import { daysSinceBackup, exportBackup } from "../lib/backup";
+import { isIOSOtherBrowser } from "../lib/offline";
 import { Empty, Icon, Ring, ScorePicker, toast } from "../components/ui";
 import { HabitDetail, HabitEditor, HabitRow } from "../components/habits";
 import { moveTask, TaskList, TaskRow, TaskSheet } from "../components/tasks";
@@ -71,6 +72,13 @@ export function Today({ date, setDate, openSettings }: { date: ISODate; setDate:
         })}
         <button className="icon-btn" onClick={() => setDate(addDays(date, 7))} aria-label="Next week"><Icon name="right" /></button>
       </div>
+
+      {isIOSOtherBrowser && (
+        <div className="banner">
+          <span>This browser can't install the app or run it offline. Open this page in <b>Safari</b>, then Share → Add to Home Screen.</span>
+          <button className="btn primary sm" onClick={async () => { try { await navigator.clipboard.writeText(location.href); toast("Link copied — paste it in Safari"); } catch { toast(location.href); } }}>Copy link</button>
+        </div>
+      )}
 
       {needBackup && (
         <div className="banner">
