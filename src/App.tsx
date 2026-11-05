@@ -13,10 +13,10 @@ import { Settings } from "./screens/Settings";
 type Tab = "today" | "brief" | "habits" | "tasks" | "weight" | "insights";
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: "today", label: "Today", icon: "today" },
-  { id: "brief", label: "Brief", icon: "brief" },
   { id: "habits", label: "Habits", icon: "habits" },
   { id: "tasks", label: "Tasks", icon: "tasks" },
   { id: "weight", label: "Weight", icon: "weight" },
+  { id: "brief", label: "Brief", icon: "brief" },
   { id: "insights", label: "Insights", icon: "insights" },
 ];
 
