@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.log
+# never commit personal data backups
+*backup*.json
